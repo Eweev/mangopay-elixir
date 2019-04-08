@@ -25,7 +25,7 @@ defmodule MangoPay do
   Returns MANGOPAY_BASE_URL
   """
   def base_url do
-    "https://api.sandbox.mangopay.com"
+    Application.get_env(:mangopay, :base_url, "https://api.sandbox.mangopay.com")
   end
 
 
@@ -134,18 +134,17 @@ defmodule MangoPay do
     end
   end
   # default request send to mangopay
-  defp filter_and_send(method, url, body, headers, query, bang) do
-    cond do
-      bang ->
-        case {Mix.env, method} do
-          {:dev, _}  -> HTTPoison.request!(method, url, body, headers, [params: query, timeout: 4600, recv_timeout: 5000])
-          {:test, _} -> HTTPoison.request!(method, url, body, headers, [params: query, timeout: 500000, recv_timeout: 500000])
-        end
-      true ->
-        case {Mix.env, method, query} do
-          {:dev, _, _}  -> HTTPoison.request(method, url, body, headers, [params: query, timeout: 4600, recv_timeout: 5000])
-          {:test, _, _} -> HTTPoison.request(method, url, body, headers, [params: query, timeout: 500000, recv_timeout: 500000])
-        end
+  defp filter_and_send(method, url, body, headers, query, true) do
+    case Mix.env do
+      :test -> HTTPoison.request!(method, url, body, headers, [params: query, timeout: 500000, recv_timeout: 500000])
+      _ ->     HTTPoison.request!(method, url, body, headers, [params: query, timeout: 4600, recv_timeout: 5000])
+    end
+  end
+  
+  defp filter_and_send(method, url, body, headers, query, _bang) do
+    case Mix.env do
+      :test -> HTTPoison.request(method, url, body, headers, [params: query, timeout: 500000, recv_timeout: 500000])
+      _ ->     HTTPoison.request(method, url, body, headers, [params: query, timeout: 4600, recv_timeout: 5000])
     end
   end
 end

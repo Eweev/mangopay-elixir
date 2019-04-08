@@ -43,7 +43,7 @@ defmodule MangoPay.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 0.13"},
+      {:httpoison, "~> 1.1.1"},
       {:poison, "~> 3.1"},
       {:credo, "~> 0.8.10", only: :dev},
       {:inch_ex, only: :docs},
