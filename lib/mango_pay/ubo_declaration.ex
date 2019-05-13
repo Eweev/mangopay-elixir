@@ -3,7 +3,7 @@ defmodule MangoPay.UboDeclaration do
   Functions for MangoPay [ubo declaration](https://docs.mangopay.com/endpoints/v2.01/ubo-declarations#e918_the-ubo-declaration-object).
   """
   use MangoPay.Query.Base
-  set_path "ubodeclarations"
+  set_path "kyc/ubodeclarations"
 
   @doc """
   Get a ubo declaration.
@@ -94,6 +94,22 @@ defmodule MangoPay.UboDeclaration do
   @doc """
   Create a ubo declaration.
 
+  """
+  def create id do
+    _create %{}, [MangoPay.User.path(id), resource()]
+  end
+
+  @doc """
+  Create a ubo declaration.
+
+  """
+  def create! id do
+    _create! %{}, [MangoPay.User.path(id), resource()]
+  end
+
+  @doc """
+  Create a ubo.
+
   ## Examples
       params                 = %{
         "Tag": "custom meta",
@@ -102,12 +118,12 @@ defmodule MangoPay.UboDeclaration do
       {:ok, ubo_declaration} = MangoPay.UboDeclaration.create("ubo_declaration_id", params)
 
   """
-  def create(id, params) do
-    _create params, ["users", id, "ubodeclarations"]
+  def create user_id, ubo_id, params do
+    _create params, user_resource(user_id, ubo_id) ++ ["ubos"]
   end
 
   @doc """
-  Create a ubo declaration.
+  Create a ubo.
 
   ## Examples
       params                 = %{
@@ -117,7 +133,7 @@ defmodule MangoPay.UboDeclaration do
       ubo_declaration = MangoPay.UboDeclaration.create!("ubo_declaration_id", params)
 
   """
-  def create!(id, params) do
-    _create! params, ["users", id, "ubodeclarations"]
+  def create! user_id, ubo_id, params do
+    _create! params, user_resource(user_id, ubo_id) ++ ["ubos"]
   end
 end
